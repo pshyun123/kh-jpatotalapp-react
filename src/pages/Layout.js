@@ -20,6 +20,7 @@ import { BiCameraMovie } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import AxiosApi from "../api/AxiosApi";
+import Common from "../utils/Common";
 
 // 사이드바 메뉴를 구성 합니다.
 
@@ -40,12 +41,21 @@ const Layout = () => {
 
   useEffect(() => {
     const getMember = async () => {
+      const accessToken = Common.getAccessToken();
       try {
         const rsp = await AxiosApi.memberGetOne(); // 한명의 프로필 정보 가져옴.(닉네임 포함, 이걸 뽑아서...)
         setMember(rsp.data);
         setName(rsp.data.name); // ...여기에 닉네임 전달
       } catch (e) {
-        console.error(e);
+        if (e.response.status === 401) {
+          await Common.handleUnauthorized();
+          const newToken = Common.getAccessToken();
+          if (newToken !== accessToken) {
+            const rsp = await AxiosApi.memberGetOne(); // 전체 조회
+            setMember(rsp.data);
+            setName(rsp.data.name);
+          }
+        }
       }
     };
     getMember();

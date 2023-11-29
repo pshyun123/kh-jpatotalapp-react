@@ -24,20 +24,14 @@ const AxiosApi = {
   },
   // 회원 조회
   memberGetOne: async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      console.log("회원 조회 : ", token);
-      return await axios.get(KH_DOMAIN + `/users/detail`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-      });
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        Common.handleUnauthorized();
-      }
-    }
+    const token = localStorage.getItem("accessToken");
+    console.log("회원 조회 : ", token);
+    return await axios.get(KH_DOMAIN + `/users/detail`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
   },
 
   // 회원 가입
